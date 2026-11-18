@@ -315,10 +315,10 @@ insert into public.cashboxes (id, location_id, currency_id, name) values
   ('c2000000-0000-4000-8000-000000000004', '22222222-2222-4222-8222-222222222222', 'aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaa4', 'Касса USDT · Москва');
 
 insert into public.transit_accounts (id, currency_id, name) values
-  ('t0000000-0000-4000-8000-000000000001', 'aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaa1', 'Транзит RUB'),
-  ('t0000000-0000-4000-8000-000000000002', 'aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaa2', 'Транзит USD'),
-  ('t0000000-0000-4000-8000-000000000003', 'aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaa3', 'Транзит EUR'),
-  ('t0000000-0000-4000-8000-000000000004', 'aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaa4', 'Транзит USDT');
+  ('d0000000-0000-4000-8000-000000000001', 'aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaa1', 'Транзит RUB'),
+  ('d0000000-0000-4000-8000-000000000002', 'aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaa2', 'Транзит USD'),
+  ('d0000000-0000-4000-8000-000000000003', 'aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaa3', 'Транзит EUR'),
+  ('d0000000-0000-4000-8000-000000000004', 'aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaa4', 'Транзит USDT');
 
 insert into public.app_settings (key, value) values
   ('company_name', '"VALORA"'::jsonb),
