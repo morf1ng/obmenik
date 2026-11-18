@@ -12,7 +12,7 @@ export default async function ApplicationLayout({ children }: { children: React.
         <p className="text-sm font-semibold tracking-[0.18em] text-primary">VALORA</p>
         <h1 className="mt-3 text-3xl font-semibold">Нужны ключи Supabase</h1>
         <p className="mt-3 text-sm leading-6 text-muted-foreground">
-          Скопируйте .env.example в .env.local и заполните NEXT_PUBLIC_SUPABASE_URL, NEXT_PUBLIC_SUPABASE_ANON_KEY и серверный SUPABASE_SERVICE_ROLE_KEY. Затем примените миграции и выполните npm run seed.
+          Скопируйте .env.example в .env.local и заполните NEXT_PUBLIC_SUPABASE_URL, NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY и серверный SUPABASE_SECRET_KEY. Затем примените миграции и выполните npm run seed.
         </p>
       </main>
     );

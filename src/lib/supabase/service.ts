@@ -1,10 +1,10 @@
 import "server-only";
 import { createClient } from "@supabase/supabase-js";
-import { supabaseUrl } from "@/lib/env";
+import { supabaseSecretKey, supabaseUrl } from "@/lib/env";
 
 export function createServiceClient() {
-  const key = process.env.SUPABASE_SERVICE_ROLE_KEY;
-  if (!key) throw new Error("SUPABASE_SERVICE_ROLE_KEY доступен только на сервере и не задан");
+  const key = supabaseSecretKey();
+  if (!key) throw new Error("Секретный ключ Supabase доступен только на сервере и не задан");
   return createClient(supabaseUrl(), key, {
     auth: { persistSession: false, autoRefreshToken: false },
   });

@@ -1,8 +1,5 @@
 export function isSupabaseConfigured() {
-  return Boolean(
-    process.env.NEXT_PUBLIC_SUPABASE_URL &&
-      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
-  );
+  return Boolean(process.env.NEXT_PUBLIC_SUPABASE_URL && supabaseAnonKeyOrEmpty());
 }
 
 export function supabaseUrl() {
@@ -12,7 +9,15 @@ export function supabaseUrl() {
 }
 
 export function supabaseAnonKey() {
-  const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
-  if (!key) throw new Error("Не задан NEXT_PUBLIC_SUPABASE_ANON_KEY");
+  const key = supabaseAnonKeyOrEmpty();
+  if (!key) throw new Error("Не задан публичный ключ Supabase");
   return key;
+}
+
+export function supabaseSecretKey() {
+  return process.env.SUPABASE_SECRET_KEY || process.env.SUPABASE_SERVICE_ROLE_KEY || "";
+}
+
+function supabaseAnonKeyOrEmpty() {
+  return process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || "";
 }

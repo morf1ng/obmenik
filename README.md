@@ -60,7 +60,7 @@ npm run build
 
 1. Запушьте репозиторий. `.env.local` в git не входит.
 2. Импортируйте проект в Vercel.
-3. Добавьте три переменные из `.env.example`. `SUPABASE_SERVICE_ROLE_KEY` отметьте только для сервера, не для Preview, если превью публичное.
+3. Добавьте три переменные из `.env.example`. `SUPABASE_SECRET_KEY` отметьте только для сервера.
 4. В Supabase Auth добавьте домен Vercel в Site URL и Redirect URLs.
 5. Убедитесь, что регистрация новых пользователей выключена.
 6. Локально выполните `npm run build` до выкладки.
