@@ -1,36 +1,72 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# VALORA
 
-## Getting Started
+Внутренняя система управления обменной компанией с точками в Махачкале и Москве. Это рабочее место сотрудников: кассы, обмены, перестановки, контрагенты, долги и бухгалтерия. Публичного обмена и регистрации клиентов нет.
 
-First, run the development server:
+Интерфейс на русском. Деньги хранятся в `numeric` и считаются в Postgres. Баланс кассы — сумма журнала, а не поле, которое можно отредактировать.
+
+## Стек
+
+Next.js (App Router), TypeScript, Tailwind CSS, shadcn/ui, Supabase Auth и Postgres, React Hook Form не требуется для фильтров, формы ходят в серверные действия с проверкой Zod. Графики — Recharts, даты — date-fns, суммы на клиенте — decimal.js.
+
+## Быстрый старт
+
+1. Создайте проект на [supabase.com](https://supabase.com).
+2. В Authentication → Providers оставьте Email и **выключите** Allow new users to sign up.
+3. В SQL Editor выполните файлы из `supabase/migrations` по порядку имён.
+4. Скопируйте `.env.example` в `.env.local` и подставьте URL, anon key и service role key.
+5. Установите зависимости и загрузите демо-данные:
 
 ```bash
+npm install
+npm run seed
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+`npm run seed` создаёт восемь демо-сотрудников и печатает пароль в консоль. Пароль не сохраняется в репозиторий. Если переменная `DEMO_PASSWORD` задана в `.env.local`, используется она.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+Вход администратора: `admin@valora.demo`.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Повторный запуск seed обновляет пароли, но не дублирует финансовые документы.
 
-## Learn More
+## Что проводит база
 
-To learn more about Next.js, take a look at the following resources:
+Все денежные действия — функции Postgres в одной транзакции:
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+- обмен: проверка остатка кассы расхода, приход, расход, снимок курса, комиссия отдельной записью;
+- приход, расход и корректировка с причиной;
+- перестановка: заявка → отправка на транзитный счёт → подтверждение получения;
+- комиссия перестановки: отправлено = получено + комиссия;
+- долг и частичное или полное погашение через кассу;
+- отмена проведённого документа сторнирующими проводками, без удаления истории.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+Повтор с тем же ключом идемпотентности не создаёт вторую проводку. Блокировка кассы не даёт двум операциям одновременно увести остаток в минус.
 
-## Deploy on Vercel
+Роли: `ADMIN`, `ACCOUNTANT`, `MANAGER`, `EMPLOYEE`. Дополнительно права можно разрешить или запретить конкретному сотруднику и ограничить точками. Те же проверки стоят в RLS: сотрудник читает только свои точки, а писать журнал напрямую нельзя.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+Положительный баланс контрагента значит, что он должен компании. Отрицательный — компания должна ему. Валюты между собой не складываются.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Проверки
+
+```bash
+npm run check:money
+npm run typecheck
+npm run lint
+npm run build
+```
+
+`npm run seed` в конце вызывает `assert_financial_integrity()`: сверяет обмены, транзит, комиссии перестановок, остатки долгов и отсутствие отрицательных касс. Внутри seed также проверяются отмена, повторный ключ и отказ при нехватке средств.
+
+## Деплой на Vercel
+
+1. Запушьте репозиторий. `.env.local` в git не входит.
+2. Импортируйте проект в Vercel.
+3. Добавьте три переменные из `.env.example`. `SUPABASE_SERVICE_ROLE_KEY` отметьте только для сервера, не для Preview, если превью публичное.
+4. В Supabase Auth добавьте домен Vercel в Site URL и Redirect URLs.
+5. Убедитесь, что регистрация новых пользователей выключена.
+6. Локально выполните `npm run build` до выкладки.
+
+Миграции на Vercel сами не применяются: их нужно выполнить в SQL Editor один раз для проекта.
+
+## Демо-состав
+
+Точки Махачкала и Москва, валюты RUB, USD, EUR и USDT, по четыре кассы на точку, десять контрагентов, восемь сотрудников, обмены, перестановки во всех статусах, долги и история курсов. Адреса, имена и комментарии помечены DEMO.
